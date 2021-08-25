@@ -7,7 +7,7 @@ global foldername
 
 
 def check():
-    matched = re.match("[0-9][0-9]+", foldername)
+    matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", foldername)
     is_match = bool(matched)
     if matched:
         print("Yes")
