@@ -1,5 +1,6 @@
 import inotify.adapters
 import re
+import os
 
 notifier = inotify.adapters.Inotify()
 notifier.add_watch("/home/overlayfox/Documents/Test")
@@ -10,7 +11,7 @@ def check():
     matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", foldername)
     is_match = bool(matched)
     if matched:
-        print("Yes")
+        print("Fine")
     else:
         print("No")
 
