@@ -13,7 +13,9 @@ def check():
     if matched:
         print("Fine")
     else:
-        print("No")
+        path = "/home/overlayfox/Documents/Test/"+foldername
+        os.rmdir(path)
+        print("Folder delted")
 
 
 
