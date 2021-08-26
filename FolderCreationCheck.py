@@ -28,11 +28,17 @@ def check():
         os.makedirs(path + folder_name + "/05 AfterEffects")
         os.makedirs(path + folder_name + "/06 Photoshop")
         count_allowed = count_allowed + 1
-        print(count_allowed, " folders created")
+        if count_allowed > 1:
+            print(count_allowed, " folders created")
+        else:
+            print(count_allowed, " folder created")
     else:
-        os.rmdir(path+folder_name)
+        os.rmdir(path + folder_name)
         count_deleted = count_deleted + 1
-        print(count_deleted, " folders deleted")
+        if count_deleted > 1:
+            print(count_deleted, " folders deleted")
+        else:
+            print(count_deleted, " folder deleted")
 
 
 for event in notifier.event_gen():
