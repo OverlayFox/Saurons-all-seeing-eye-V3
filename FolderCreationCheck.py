@@ -1,16 +1,21 @@
 import inotify.adapters
 import re
 import os
+import tkinter
+from tkinter import *
 
+# defines variables
 notifier = inotify.adapters.Inotify()
 notifier.add_watch("/home/overlayfox/Documents/Test")
-
 global folder_name
 count_folder = 0
 count_deleted = 0
 count_allowed = 0
 path = "/home/overlayfox/Documents/Test/"
 
+
+# this checks the given path and looks for folders that don't follow the "0000_00_00 - " naming scheme.
+# If they don't it deletes them, if it does it creates 7 sub folders in the new directory
 
 def check():
     global count_deleted
