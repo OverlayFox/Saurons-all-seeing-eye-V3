@@ -5,7 +5,7 @@ import datetime
 import shutil
 import time
 
-my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]
+my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]                     #defines the compressor for the 7z archive
 getdate = datetime.datetime
 weekday = getdate.today().weekday()
 date = getdate.now()
@@ -15,12 +15,12 @@ zip_file_name = date.strftime("%Y_%m_%d - compressedArchive")
 
 
 def compressor():
-    if not os.listdir(main_path):
+    if not os.listdir(main_path):                                                                 #checks if the directory is empty or not
         print("Directory is empty")
     else:
-        with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:
+        with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:                #if the directory is not empty it compresses all files into a 7z archive
             archive.writeall(main_path, 'archive')
-            shutil.move(zip_file_name, "/home/overlayfox/Documents")
+            shutil.move(zip_file_name, "/home/overlayfox/Documents")                              #moves the archive to the set destination
 
 
 def getweekday():
@@ -29,14 +29,18 @@ def getweekday():
     weekday = getdate.today().weekday()
 
 
-while True:
-    if date_converted != "11:18:00" and weekday != "4":
-        date = getdate.now()
-        date_converted = date.strftime("%H:%M:%S")
-        time.sleep(1)
-        print(date_converted)
-        if date_converted == "00:00:01":
-            getweekday()
-            print(weekday)
-    else:
-        compressor()
+def automated_compressor():
+    global date_converted
+    global date
+
+    while True:
+        if date_converted != "11:18:00" and weekday != "4":                                          #checks if it is saturday at 1am
+            date = getdate.now()                                                                     #if not it checks the time every second and waits for the time to arrive
+            date_converted = date.strftime("%H:%M:%S")
+            time.sleep(1)
+            print(date_converted)
+            if date_converted == "00:00:01":
+                getweekday()
+                print(weekday)
+        else:                                                                                        #if the time arrived it runs the compressor class and loops again
+            compressor()
