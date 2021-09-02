@@ -4,15 +4,16 @@ import py7zr
 import datetime
 import shutil
 import time
+import tkinter
 
 my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]                     #defines the compressor for the 7z archive
 getdate = datetime.datetime
 weekday = getdate.today().weekday()
 date = getdate.now()
 date_converted = date.strftime("%H:%M:%S")
-main_path = "/home/overlayfox/Documents/Test"
+main_path = "/home/overlayfox/Documents"
 zip_file_name = date.strftime("%Y_%m_%d - compressedArchive")
-
+loop_ender = True
 
 def compressor():
     if not os.listdir(main_path):                                                                 #checks if the directory is empty or not
@@ -33,7 +34,7 @@ def automated_compressor():
     global date_converted
     global date
 
-    while True:
+    while loop_ender == True:
         if date_converted != "11:18:00" and weekday != "4":                                          #checks if it is saturday at 1am
             date = getdate.now()                                                                     #if not it checks the time every second and waits for the time to arrive
             date_converted = date.strftime("%H:%M:%S")
@@ -44,3 +45,4 @@ def automated_compressor():
                 print(weekday)
         else:                                                                                        #if the time arrived it runs the compressor class and loops again
             compressor()
+    return
