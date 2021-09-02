@@ -6,14 +6,18 @@ import shutil
 import time
 import tkinter
 
+compressor_time = "11:18:00"
+compressor_date = "5"
+main_path = "/home/overlayfox/Documents"
+archive_path = "/home/overlayfox/Documents"
+
 my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]                     #defines the compressor for the 7z archive
 getdate = datetime.datetime
 weekday = getdate.today().weekday()
 date = getdate.now()
 date_converted = date.strftime("%H:%M:%S")
-main_path = "/home/overlayfox/Documents"
 zip_file_name = date.strftime("%Y_%m_%d - compressedArchive")
-loop_ender = True
+
 
 def compressor():
     if not os.listdir(main_path):                                                                 #checks if the directory is empty or not
@@ -21,7 +25,7 @@ def compressor():
     else:
         with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:                #if the directory is not empty it compresses all files into a 7z archive
             archive.writeall(main_path, 'archive')
-            shutil.move(zip_file_name, "/home/overlayfox/Documents")                              #moves the archive to the set destination
+            shutil.move(zip_file_name, archive_path) #moves the archive to the set destination
 
 
 def getweekday():
@@ -34,8 +38,8 @@ def automated_compressor():
     global date_converted
     global date
 
-    while loop_ender == True:
-        if date_converted != "11:18:00" and weekday != "4":                                          #checks if it is saturday at 1am
+    while True:
+        if date_converted != compressor_time and weekday != compressor_date:                                          #checks if it is saturday at 1am
             date = getdate.now()                                                                     #if not it checks the time every second and waits for the time to arrive
             date_converted = date.strftime("%H:%M:%S")
             time.sleep(1)
@@ -45,4 +49,3 @@ def automated_compressor():
                 print(weekday)
         else:                                                                                        #if the time arrived it runs the compressor class and loops again
             compressor()
-    return
