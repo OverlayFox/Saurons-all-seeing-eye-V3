@@ -4,7 +4,6 @@ import tkinter
 from tkinter import *
 from tkinter import filedialog
 import Compressor
-import FolderCreationCheck
 
 date = "Null"
 window = tkinter.Tk()
