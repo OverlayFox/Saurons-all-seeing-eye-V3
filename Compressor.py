@@ -11,7 +11,10 @@ global archive_path
 global path_test
 global compressor_time
 global compressor_date
+global user_compressor_date
 
+
+# get data from user
 
 def main_path_definer():
     global main_path
@@ -55,26 +58,45 @@ def compressor_time_definer():
 
 def compressor_date_definer():
     global compressor_date
+    global user_compressor_date
 
-    compressor_date = input("Enter weekday to execute compressor. Monday is 0 and Sunday is 6: ")
+    user_compressor_date = input("Enter a weekday to execute compressor: ")
     while True:
-        matched = re.match("[0-6]", compressor_date)
-        bool(matched)
-        if matched:
+        if user_compressor_date in ['monday', "Monday"]:
+            compressor_date = 0
+            return
+        if user_compressor_date in ["tuesday", "Tuesday"]:
+            compressor_date = 1
+            return
+        if user_compressor_date in ["wednesday", "Wednesday"]:
+            compressor_date = 2
+            return
+        if user_compressor_date in ["thursday", "Thursday"]:
+            compressor_date = 3
+            return
+        if user_compressor_date in ["friday", "Friday"]:
+            compressor_date = 4
+            return
+        if user_compressor_date in ["saturday", "Saturday"]:
+            compressor_date = 5
+            return
+        if user_compressor_date in ["sunday", "Sunday"]:
+            compressor_date = 6
             return
         else:
-            compressor_date = input("Please enter a number from 0 to 6 for the weekday: ")
+            user_compressor_date = input("Please enter a valid weekday in english: ")
 
 
 compressor_time_definer()
 compressor_date_definer()
 main_path_definer()
 archive_path_definer()
-print("Compressor will be executed on " + compressor_date + " at " + compressor_time)
+print("Compressor will be executed on " + user_compressor_date + " at " + compressor_time)
 
 # ----------------------------------------------------------------------------------------------------
+# the actual compressor script
 
-my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]                               #defines the compressor for the 7z archive
+my_filter = [{"id": py7zr.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME}]  # defines the compressor for the 7z archive
 getdate = datetime.datetime
 weekday = getdate.today().weekday()
 date = getdate.now()
@@ -102,27 +124,25 @@ def getweekday():
 def compressor():
     global my_filter
 
-    if not os.listdir(main_path):                                                                 #checks if the directory is empty or not
+    if not os.listdir(main_path):  # checks if the directory is empty or not
         print("Directory is empty")
     else:
-        disk_space_available = shutil.disk_usage(archive_path)[2]                                 #gets the free space available in the main path
-        directory_size = get_size()                                                               #calculates the size of the uncompressed archive as reference
-        if not directory_size >= disk_space_available:                                            #checks if there is enough space for the compression
-            with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:            #if the directory is not empty it compresses all files into a 7z archive
+        disk_space_available = shutil.disk_usage(archive_path)[2]  # gets the free space available in the main path
+        directory_size = get_size()  # calculates the size of the uncompressed archive as reference
+        if not directory_size >= disk_space_available:  # checks if there is enough space for the compression
+            with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:  # if the directory is not empty it compresses all files into a 7z archive
                 archive.writeall(main_path, 'archive')
-                shutil.move(zip_file_name, archive_path)                                          #moves the archive to the set destination
+                shutil.move(zip_file_name, archive_path)  # moves the archive to the set destination
         else:
             print("Not enough space available to compress the archive.")
 
 
 while True:
-    if date_converted != compressor_time and weekday != compressor_date:                         #checks if it is the user set date and time
-        date = getdate.now()                                                                     #if not it checks the time every second and waits for the time to arrive
+    if date_converted != compressor_time and weekday != compressor_date:  # checks if it is the user set date and time
+        date = getdate.now()  # if not it checks the time every second and waits for the time to arrive
         date_converted = date.strftime("%H:%M:%S")
         time.sleep(1)
-        print(date_converted)
         if date_converted == "00:00:01":
             getweekday()
-            print(weekday)
-    else:                                                                                        #if the time arrived it runs the compressor class and loops again
+    else:  # if the time arrived it runs the compressor class and loops again
         compressor()
