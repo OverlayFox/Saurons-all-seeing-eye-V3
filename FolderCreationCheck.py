@@ -1,9 +1,8 @@
-import inotify.adapters
-import re
-import os
 import datetime
-import time
+import os
 from tkinter import *
+
+import inotify.adapters
 
 getdate = datetime.datetime
 
@@ -33,13 +32,14 @@ notifier.add_watch(path)
 # this checks the given path and looks for folders that don't follow the "0000_00_00 - " naming scheme.
 # If they don't it deletes them, if it does it creates 7 sub folders in the new directory
 
+
 def check():
     global count_deleted
     global path
     global count_allowed
 
     matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", folder_name)
-    is_match = bool(matched)
+    bool(matched)
     if matched:
         os.makedirs(path + folder_name + "/00 Export")
         os.makedirs(path + folder_name + "/01 Footage")
