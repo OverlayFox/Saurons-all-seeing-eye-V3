@@ -1,18 +1,34 @@
 import inotify.adapters
 import re
 import os
-import tkinter
+import datetime
+import time
 from tkinter import *
+
+getdate = datetime.datetime
 
 # defines variables
 notifier = inotify.adapters.Inotify()
-notifier.add_watch("/home/overlayfox/Documents/Test")
+global path
 global folder_name
 count_folder = 0
 count_deleted = 0
 count_allowed = 0
-path = "/home/overlayfox/Documents/Test/"
 
+
+def path_check():
+    global path
+
+    path = input("Enter the Path for the Directory to be checked: ") + "/"
+    while True:
+        if os.path.exists(path):
+            return
+        else:
+            path = input("Please enter a valid Path for the Directory to be checked: ") + "/"
+
+
+path_check()
+notifier.add_watch(path)
 
 # this checks the given path and looks for folders that don't follow the "0000_00_00 - " naming scheme.
 # If they don't it deletes them, if it does it creates 7 sub folders in the new directory
@@ -34,22 +50,26 @@ def check():
         os.makedirs(path + folder_name + "/06 Photoshop")
         count_allowed = count_allowed + 1
         if count_allowed > 1:
-            print(count_allowed, " folders created")
+            print(count_allowed, " Folders allowed")
         else:
-            print(count_allowed, " folder created")
+            print(count_allowed, " Folder allowed")
     else:
         os.rmdir(path + folder_name)
         count_deleted = count_deleted + 1
         if count_deleted > 1:
-            print(count_deleted, " folders deleted")
+            print(count_deleted, " Folders deleted")
         else:
-            print(count_deleted, " folder deleted")
+            print(count_deleted, " Folder deleted")
 
 
 for event in notifier.event_gen():
     if event is not None:
         if "IN_CREATE" in event[1]:
-            print("file '{0}' created in '{1}'".format(event[3], event[2]))
+            print("Folder '{0}' was created at ".format(event[3], event[2]) + getdate.now().strftime("%H:%M:%S"))
             folder_name = event[3]
             count_folder = count_folder + 1
+            if count_folder > 1:
+                print(count_folder, " Folders created by user")
+            else:
+                print(count_folder, " Folder created by user")
             check()

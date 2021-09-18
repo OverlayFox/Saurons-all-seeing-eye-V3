@@ -5,7 +5,6 @@ import datetime
 import shutil
 import time
 import re
-from pathlib import Path
 
 global main_path
 global archive_path
@@ -20,7 +19,6 @@ def main_path_definer():
     main_path = input("Enter the uncompressed Archive Path here: ")
     while True:
         if os.path.exists(main_path):
-            test = True
             return
         else:
             main_path = input("Please use an existing Path for the uncompressed Archive Path here: ")
@@ -114,7 +112,7 @@ def compressor():
                 archive.writeall(main_path, 'archive')
                 shutil.move(zip_file_name, archive_path)                                          #moves the archive to the set destination
         else:
-            print("Not enough space to compress the archive.")
+            print("Not enough space available to compress the archive.")
 
 
 while True:
