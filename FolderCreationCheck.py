@@ -11,9 +11,48 @@ notifier = inotify.adapters.Inotify()
 global path
 global folder_name
 global folder_counter
-count_folder = 0
-count_deleted = 0
-count_allowed = 0
+
+
+def allowed_folder_counter():
+    with open("folder_counter_txt.txt", "r") as f:
+        list_of_lines = f.readlines()
+        counter = int(list_of_lines[4])
+        counter = counter + 1
+        list_of_lines[4] = str(counter) + "\n"
+    with open("folder_counter_txt.txt", "w") as f:
+        f.writelines(list_of_lines)
+    if counter > 1:
+        print(counter, " Folders allowed")
+    else:
+        print(counter, " Folder allowed")
+
+
+def deleted_folder_counter():
+    with open("folder_counter_txt.txt", "r") as f:
+        list_of_lines = f.readlines()
+        counter = int(list_of_lines[7])
+        counter = counter + 1
+        list_of_lines[7] = str(counter) + "\n"
+    with open("folder_counter_txt.txt", "w") as f:
+        f.writelines(list_of_lines)
+    if counter > 1:
+        print(counter, " Folders deleted")
+    else:
+        print(counter, " Folder deleted")
+
+
+def total_folder_counter():
+    with open("folder_counter_txt.txt", "r") as f:
+        list_of_lines = f.readlines()
+        counter = int(list_of_lines[1])
+        counter = counter + 1
+        list_of_lines[1] = str(counter) + "\n"
+    with open("folder_counter_txt.txt", "w") as f:
+        f.writelines(list_of_lines)
+    if counter > 1:
+        print(counter, " Folders created by user in total")
+    else:
+        print(counter, " Folder created by user in total")
 
 
 def path_check():
@@ -35,31 +74,20 @@ notifier.add_watch(path)
 
 
 def check():
-    global count_deleted
     global path
-    global count_allowed
-    global folder_counter
 
     folders = ["/00 Export", "/01 Footage", "/02 Fonts", "/03 Graphics", "/04 Premiere", "/05 AfterEffects", "/06 Photoshop"]
-    folder_counter = 0
+    folder_cycle = 0
     matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", folder_name)
     bool(matched)
     if matched:
-        while folder_counter < 7:
-            os.makedirs(path + folder_name + folders[folder_counter])
-            folder_counter = folder_counter + 1
-        count_allowed = count_allowed + 1
-        if count_allowed > 1:
-            print(count_allowed, " Folders allowed")
-        else:
-            print(count_allowed, " Folder allowed")
+        while folder_cycle < 7:
+            os.makedirs(path + folder_name + folders[folder_cycle])
+            folder_cycle = folder_cycle + 1
+        allowed_folder_counter()
     else:
         os.rmdir(path + folder_name)
-        count_deleted = count_deleted + 1
-        if count_deleted > 1:
-            print(count_deleted, " Folders deleted")
-        else:
-            print(count_deleted, " Folder deleted")
+        deleted_folder_counter()
 
 
 for event in notifier.event_gen():
@@ -67,9 +95,5 @@ for event in notifier.event_gen():
         if "IN_CREATE" in event[1]:
             print("Folder '{0}' was created at ".format(event[3], event[2]) + getdate.now().strftime("%H:%M:%S"))
             folder_name = event[3]
-            count_folder = count_folder + 1
-            if count_folder > 1:
-                print(count_folder, " Folders created by user")
-            else:
-                print(count_folder, " Folder created by user")
+            total_folder_counter()
             check()
