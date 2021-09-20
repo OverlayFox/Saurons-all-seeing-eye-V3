@@ -10,6 +10,7 @@ getdate = datetime.datetime
 notifier = inotify.adapters.Inotify()
 global path
 global folder_name
+global folder_counter
 count_folder = 0
 count_deleted = 0
 count_allowed = 0
@@ -37,17 +38,16 @@ def check():
     global count_deleted
     global path
     global count_allowed
+    global folder_counter
 
+    folders = ["/00 Export", "/01 Footage", "/02 Fonts", "/03 Graphics", "/04 Premiere", "/05 AfterEffects", "/06 Photoshop"]
+    folder_counter = 0
     matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", folder_name)
     bool(matched)
     if matched:
-        os.makedirs(path + folder_name + "/00 Export")
-        os.makedirs(path + folder_name + "/01 Footage")
-        os.makedirs(path + folder_name + "/02 Fonts")
-        os.makedirs(path + folder_name + "/03 Graphics")
-        os.makedirs(path + folder_name + "/04 Premiere")
-        os.makedirs(path + folder_name + "/05 AfterEffects")
-        os.makedirs(path + folder_name + "/06 Photoshop")
+        while folder_counter < 7:
+            os.makedirs(path + folder_name + folders[folder_counter])
+            folder_counter = folder_counter + 1
         count_allowed = count_allowed + 1
         if count_allowed > 1:
             print(count_allowed, " Folders allowed")

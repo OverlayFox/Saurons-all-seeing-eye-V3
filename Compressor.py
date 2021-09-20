@@ -51,7 +51,7 @@ def compressor_time_definer():
         matched = re.match("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]", compressor_time)
         bool(matched)
         if matched:
-            return
+            returnOverlayFoxWindows
         else:
             compressor_time = input("Follow the format HH:MM:SS for the starting time: ")
 
