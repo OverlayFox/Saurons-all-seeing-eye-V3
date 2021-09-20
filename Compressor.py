@@ -59,32 +59,15 @@ def compressor_time_definer():
 def compressor_date_definer():
     global compressor_date
     global user_compressor_date
+    weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
     user_compressor_date = input("Enter a weekday to execute compressor: ")
     while True:
-        if user_compressor_date in ['monday', "Monday"]:
-            compressor_date = 0
-            return
-        if user_compressor_date in ["tuesday", "Tuesday"]:
-            compressor_date = 1
-            return
-        if user_compressor_date in ["wednesday", "Wednesday"]:
-            compressor_date = 2
-            return
-        if user_compressor_date in ["thursday", "Thursday"]:
-            compressor_date = 3
-            return
-        if user_compressor_date in ["friday", "Friday"]:
-            compressor_date = 4
-            return
-        if user_compressor_date in ["saturday", "Saturday"]:
-            compressor_date = 5
-            return
-        if user_compressor_date in ["sunday", "Sunday"]:
-            compressor_date = 6
+        if user_compressor_date in weekdays:
+            compressor_date = weekdays.index(user_compressor_date)
             return
         else:
-            user_compressor_date = input("Please enter a valid weekday in english: ")
+            user_compressor_date = input("Please enter a valid weekday from monday to friday: ")
 
 
 compressor_time_definer()
