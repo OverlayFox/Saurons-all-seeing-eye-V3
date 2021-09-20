@@ -1,12 +1,9 @@
 import datetime
 import os
 from tkinter import *
-
 import inotify.adapters
 
 getdate = datetime.datetime
-
-# defines variables
 notifier = inotify.adapters.Inotify()
 global path
 global folder_name
@@ -15,12 +12,13 @@ global folder_counter
 
 def allowed_folder_counter():
     with open("folder_counter_txt.txt", "r") as f:
-        list_of_lines = f.readlines()
-        counter = int(list_of_lines[4])
-        counter = counter + 1
-        list_of_lines[4] = str(counter) + "\n"
+        list_of_lines = f.readlines()  # saves the txt doc as a array
+        counter = int(list_of_lines[
+                          4])  # saves the 5th line of the text doc into the variable that was converted from a str to a int
+        counter = counter + 1  # adds +1 to the readout variable
+        list_of_lines[4] = str(counter) + "\n"  # saves that variable to the same line and converts it back to a str
     with open("folder_counter_txt.txt", "w") as f:
-        f.writelines(list_of_lines)
+        f.writelines(list_of_lines)  # saves the array back into the txt document
     if counter > 1:
         print(counter, " Folders allowed")
     else:
@@ -68,9 +66,6 @@ def path_check():
 
 path_check()
 notifier.add_watch(path)
-
-# this checks the given path and looks for folders that don't follow the "0000_00_00 - " naming scheme.
-# If they don't it deletes them, if it does it creates 7 sub folders in the new directory
 
 
 def check():
