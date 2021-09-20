@@ -63,8 +63,8 @@ def compressor_date_definer():
 
     user_compressor_date = input("Enter a weekday to execute compressor: ")
     while True:
-        if user_compressor_date in weekdays:
-            compressor_date = weekdays.index(user_compressor_date)
+        if user_compressor_date.lower() in weekdays:
+            compressor_date = weekdays.index(user_compressor_date.lower())
             return
         else:
             user_compressor_date = input("Please enter a valid weekday from monday to friday: ")
