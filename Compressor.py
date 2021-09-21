@@ -115,7 +115,13 @@ def compressor():
         if not directory_size >= disk_space_available:  # checks if there is enough space for the compression
             with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:  # if the directory is not empty it compresses all files into a 7z archive
                 archive.writeall(main_path, 'archive')
-                shutil.move(zip_file_name, archive_path)  # moves the archive to the set destination
+            shutil.move(zip_file_name, archive_path)  # moves the archive to the set destination
+            for files in os.listdir(main_path):
+                deletion_path = os.path.join(main_path, files)
+                try:
+                    shutil.rmtree(deletion_path)
+                except OSError:
+                    os.remove(deletion_path)
         else:
             print("Not enough space available to compress the archive.")
 
