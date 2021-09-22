@@ -17,9 +17,9 @@ Libraries needed:
 -	re
 
 Operation:
-This script will wait for time specified by the user in the beginning.
+This script will wait for the time specified by the user in the beginning.
 When that date arrives, it will look if the directory is empty.
-If so, it will wait for the next weekday to arrive.
+If so, it will wait again until the user set time arrives again.
 If not, it will check how big all files are and how much space is left on the NAS.
 If there is enough space it will start to compress the files.
 Once it is done with that, it will move that archive to the second user defined destination

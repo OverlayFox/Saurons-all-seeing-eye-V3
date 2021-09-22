@@ -110,9 +110,7 @@ def compressor():
     if not os.listdir(main_path):  # checks if the directory is empty or not
         print("Directory is empty")
     else:
-        disk_space_available = shutil.disk_usage(archive_path)[2]  # gets the free space available in the main path
-        directory_size = get_size()  # calculates the size of the uncompressed archive as reference
-        if not directory_size >= disk_space_available:  # checks if there is enough space for the compression
+        if not get_size() >= shutil.disk_usage(archive_path)[2]:  # checks if there is enough space for the compression
             with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:  # if the directory is not empty it compresses all files into a 7z archive
                 archive.writeall(main_path, 'archive')
             shutil.move(zip_file_name, archive_path)  # moves the archive to the set destination
