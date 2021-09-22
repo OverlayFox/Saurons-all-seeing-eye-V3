@@ -13,8 +13,7 @@ global folder_counter
 def allowed_folder_counter():
     with open("folder_counter_txt.txt", "r") as f:
         list_of_lines = f.readlines()  # saves the txt doc as a array
-        counter = int(list_of_lines[
-                          4])  # saves the 5th line of the text doc into the variable that was converted from a str to a int
+        counter = int(list_of_lines[4])  # saves the 5th line of the text doc into the variable that was converted from a str to a int
         counter = counter + 1  # adds +1 to the readout variable
         list_of_lines[4] = str(counter) + "\n"  # saves that variable to the same line and converts it back to a str
     with open("folder_counter_txt.txt", "w") as f:

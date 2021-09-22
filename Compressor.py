@@ -98,12 +98,6 @@ def get_size():
     return total_size
 
 
-def getweekday():
-    global weekday
-
-    weekday = getdate.today().weekday()
-
-
 def compressor():
     global my_filter
 
@@ -130,6 +124,6 @@ while True:
         date_converted = date.strftime("%H:%M:%S")
         time.sleep(1)
         if date_converted == "00:00:01":
-            getweekday()
+            weekday = getdate.today().weekday()
     else:  # if the time arrived it runs the compressor class and loops again
         compressor()
