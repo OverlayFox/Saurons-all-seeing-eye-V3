@@ -6,3 +6,6 @@ Total Folders allowed:
 
 Total Folders Deleted:
 0
+
+Special Folder created:
+0

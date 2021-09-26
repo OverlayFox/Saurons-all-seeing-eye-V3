@@ -2,6 +2,7 @@ import datetime
 import os
 from tkinter import *
 import inotify.adapters
+import random
 
 getdate = datetime.datetime
 notifier = inotify.adapters.Inotify()
@@ -52,6 +53,20 @@ def total_folder_counter():
         print(counter, " Folder created by user in total")
 
 
+def special_folder_counter():
+    with open("folder_counter_txt.txt", "r") as f:
+        list_of_lines = f.readlines()
+        counter = int(list_of_lines[10])
+        counter = counter + 1
+        list_of_lines[10] = str(counter) + "\n"
+    with open("folder_counter_txt.txt", "w") as f:
+        f.writelines(list_of_lines)
+    if counter > 1:
+        print(counter, " special folders made")
+    else:
+        print(counter, " special folder made")
+
+
 def path_check():
     global path
 
@@ -79,6 +94,9 @@ def check():
             os.makedirs(path + folder_name + folders[folder_cycle])
             folder_cycle = folder_cycle + 1
         allowed_folder_counter()
+        if random.randint(0, 1000) < 1:
+            os.makedirs(path + folder_name + "/07 Furry Trash")
+            special_folder_counter()
     else:
         os.rmdir(path + folder_name)
         deleted_folder_counter()
