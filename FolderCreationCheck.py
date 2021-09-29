@@ -3,9 +3,8 @@ import os
 from tkinter import *
 import inotify.adapters
 import random
-import smbclient
 
-smbclient.ClientConfig(username="The_Black_Gate", password="SA_1600")
+
 getdate = datetime.datetime
 notifier = inotify.adapters.Inotify()
 global path
@@ -74,7 +73,7 @@ def path_check():
 
     path = input("Enter the Path for the SMB Share to be checked: ") + "/"
     while True:
-        if smbclient._os.is_remote_path(path):
+        if os.path.exists(path):
             return
         else:
             path = input("SMB does not exists. Please enter a valid SMB Share to be checked: ") + "/"
