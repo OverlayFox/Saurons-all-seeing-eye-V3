@@ -7,7 +7,6 @@ from smb.SMBConnection import SMBConnection
 
 getdate = datetime.datetime
 notifier = inotify.adapters.Inotify()
-global path
 global folder_name
 global folder_counter
 
@@ -15,15 +14,16 @@ userID = "the_black_gate"
 password = "SA_1600"
 client_machine_name = "OverlayFox"
 server_name = "mordor"
-server_ip = "192.168.50.104"
 domain_name = "mordor"
 conn = SMBConnection(userID, password, client_machine_name, server_name, domain=domain_name, use_ntlm_v2=True,
                      is_direct_tcp=True)
 
+
 def allowed_folder_counter():
     with open("folder_counter_txt.txt", "r") as f:
         list_of_lines = f.readlines()  # saves the txt doc as a array
-        counter = int(list_of_lines[4])  # saves the 5th line of the text doc into the variable that was converted from a str to a int
+        counter = int(list_of_lines[
+                          4])  # saves the 5th line of the text doc into the variable that was converted from a str to a int
         counter = counter + 1  # adds +1 to the readout variable
         list_of_lines[4] = str(counter) + "\n"  # saves that variable to the same line and converts it back to a str
     with open("folder_counter_txt.txt", "w") as f:
@@ -77,17 +77,23 @@ def special_folder_counter():
 
 
 def path_check():
-    global path
     conn.connect(server_ip, 445)
 
-    path = input("Enter the Path for the SMB Share to be checked: ") + "/"
+    i = 0
+    share_name_list = []
+    while i < len(conn.listShares()):
+        share_name_list.append(conn.listShares()[i].name)
+        i = i + 1
+
+    share = input("Enter the name of the Share that is supposed to be checked: ")
     while True:
-        if os.path.exists(path):
+        if share in share_name_list:
             return
         else:
-            path = input("SMB does not exists. Please enter a valid SMB Share to be checked: ") + "/"
+            path = input("Share does not exist, please enter one that does exist: ") + "/"
 
 
+server_ip = input("Please enter the Servers IP Address: ")
 path_check()
 notifier.add_watch(path)
 
@@ -95,7 +101,8 @@ notifier.add_watch(path)
 def check():
     global path
 
-    folders = ["/00 Export", "/01 Footage", "/02 Fonts", "/03 Graphics", "/04 Premiere", "/05 AfterEffects", "/06 Photoshop"]
+    folders = ["/00 Export", "/01 Footage", "/02 Fonts", "/03 Graphics", "/04 Premiere", "/05 AfterEffects",
+               "/06 Photoshop"]
     folder_cycle = 0
     matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", folder_name)
     bool(matched)
