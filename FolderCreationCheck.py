@@ -70,7 +70,9 @@ def special_folder_counter():
 def path_check():
     global path
 
-    path = input("Enter the Path for the Directory to be checked: ") + "/"
+    filename = input("Enter the Path for the Directory to be checked: ") + "/"
+    dirname = os.path.dirname(__file__)
+    path = os.path.join(dirname, filename)
     while True:
         if os.path.exists(path):
             return
