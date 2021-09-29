@@ -3,7 +3,10 @@ import os
 from tkinter import *
 import inotify.adapters
 import random
+import urllib
+from smb.SMBHandler import SMBHandler
 
+opener = urllib.request.build_opener(SMBHandler)
 getdate = datetime.datetime
 notifier = inotify.adapters.Inotify()
 global path
@@ -70,15 +73,12 @@ def special_folder_counter():
 def path_check():
     global path
 
-    filename = input("Enter the Path for the Directory to be checked: ") + "/"
-    dirname = os.path.dirname(__file__)
-    path = os.path.join(dirname, filename)
+    path = input("Enter the Path for the SMB Share to be checked: ") + "/"
     while True:
         if os.path.exists(path):
             return
         else:
-            path = input("Please enter a valid Path for the Directory to be checked: ") + "/"
-
+            path = input("SMB does not exists. Please enter a valid SMB Share to be checked: ") + "/"
 
 path_check()
 notifier.add_watch(path)
