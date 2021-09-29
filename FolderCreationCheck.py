@@ -74,7 +74,7 @@ def path_check():
 
     path = input("Enter the Path for the SMB Share to be checked: ") + "/"
     while True:
-        if smbclient.path.exists(path):
+        if smbclient._os.is_remote_path(path):
             return
         else:
             path = input("SMB does not exists. Please enter a valid SMB Share to be checked: ") + "/"
