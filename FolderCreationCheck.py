@@ -1,14 +1,16 @@
 import datetime
 import os
 from tkinter import *
-import inotify.adapters
 import random
 from smb.SMBConnection import SMBConnection
+import platform
+import subprocess
 
 getdate = datetime.datetime
-notifier = inotify.adapters.Inotify()
-global folder_name
 global folder_counter
+global server_ip
+global share
+global name_last_created_folder
 
 userID = "the_black_gate"
 password = "SA_1600"
@@ -77,7 +79,7 @@ def special_folder_counter():
 
 
 def path_check():
-    conn.connect(server_ip, 445)
+    global share
 
     i = 0
     share_name_list = []
@@ -90,39 +92,64 @@ def path_check():
         if share in share_name_list:
             return
         else:
-            path = input("Share does not exist, please enter one that does exist: ") + "/"
+            share = input("Share does not exist, please enter one that does exist: ")
 
 
-server_ip = input("Please enter the Servers IP Address: ")
+def server_check():
+    global server_ip
+
+    server_ip = input("Please enter the Servers IP Address: ")
+
+    while True:
+        command = ['ping', '-c', '1', server_ip]
+        try:
+            print("Pinging Server....")
+            if subprocess.call(command) == 0:
+                print("Server was reached and is online")
+                return
+        except IOError:
+            server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+        else:
+            server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+
+
+server_check()
+conn.connect(server_ip, 445)
 path_check()
-notifier.add_watch(path)
 
 
 def check():
-    global path
+    global name_last_created_folder
 
     folders = ["/00 Export", "/01 Footage", "/02 Fonts", "/03 Graphics", "/04 Premiere", "/05 AfterEffects",
                "/06 Photoshop"]
     folder_cycle = 0
-    matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", folder_name)
+    matched = re.match("[0-9][0-9][0-9][0-9]_[0-9][0-9]_[0-9][0-9] - ", name_last_created_folder)
     bool(matched)
     if matched:
         while folder_cycle < 7:
-            os.makedirs(path + folder_name + folders[folder_cycle])
+            conn.createDirectory(share, name_last_created_folder + "/" + folders[folder_cycle])
             folder_cycle = folder_cycle + 1
         allowed_folder_counter()
         if random.randint(0, 1000) < 1:
-            os.makedirs(path + folder_name + "/07 Furry Trash")
+            conn.createDirectory(share, name_last_created_folder + "/07 Furry Trash")
             special_folder_counter()
     else:
-        os.rmdir(path + folder_name)
+        conn.deleteDirectory(share, name_last_created_folder)
         deleted_folder_counter()
 
 
-for event in notifier.event_gen():
-    if event is not None:
-        if "IN_CREATE" in event[1]:
-            print("Folder '{0}' was created at ".format(event[3], event[2]) + getdate.now().strftime("%H:%M:%S"))
-            folder_name = event[3]
+counted_folders = len(conn.listPath(share, "/"))
+while True:
+    if len(conn.listPath(share, "/")) > counted_folders:
+        number_of_folders = len(conn.listPath(share, "/")) - 1
+        name_last_created_folder = conn.listPath(share, "/")[number_of_folders].filename
+        if name_last_created_folder != "New folder" and name_last_created_folder != "Neuer Ordner":
+            print("Folder " + name_last_created_folder + " was created at " + getdate.now().strftime("%H:%M:%S"))
+            folder_name = conn.listPath(share, "/")[number_of_folders].filename
             total_folder_counter()
             check()
+            counted_folders = len(conn.listPath(share, "/"))
+
+    if len(conn.listPath(share, "/")) < counted_folders:
+        counted_folders = len(conn.listPath(share, "/"))
