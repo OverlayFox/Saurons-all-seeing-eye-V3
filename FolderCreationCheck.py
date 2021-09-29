@@ -78,7 +78,7 @@ def special_folder_counter():
 
 def path_check():
     global path
-    conn.connect(server_ip, 443)
+    conn.connect(server_ip, 445)
 
     path = input("Enter the Path for the SMB Share to be checked: ") + "/"
     while True:
