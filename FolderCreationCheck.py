@@ -15,6 +15,7 @@ global name_last_created_folder
 
 userID = "the_black_gate"
 password = "SA_1600"
+client_machine_name = input("Please enter the clients machine name: ")
 server_name = "mordor"
 domain_name = "mordor"
 conn = SMBConnection(userID, password, client_machine_name, server_name, domain=domain_name, use_ntlm_v2=True,
@@ -117,7 +118,6 @@ def server_check():
             server_ip = input("Please enter a IP Address the follows the pattern 192.168.000.000")
 
 
-client_machine_name = input("Please enter the clients machine name: ")
 server_check()
 conn.connect(server_ip, 445)
 path_check()
