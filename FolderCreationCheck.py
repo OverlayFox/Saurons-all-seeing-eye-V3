@@ -156,5 +156,8 @@ while True:
             check()
             counted_folders = len(conn.listPath(share, "/"))
 
+        if len(conn.listPath(share, "/")) < counted_folders:
+            counted_folders = len(conn.listPath(share, "/"))
+
     if len(conn.listPath(share, "/")) < counted_folders:
         counted_folders = len(conn.listPath(share, "/"))
