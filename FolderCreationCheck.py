@@ -147,7 +147,6 @@ def check():
 counted_folders = len(conn.listPath(share, "/"))
 while True:
     if len(conn.listPath(share, "/")) > counted_folders:
-        print(len(conn.listPath(share, "/")))
         number_of_folders = len(conn.listPath(share, "/")) - 1
         name_last_created_folder = conn.listPath(share, "/")[number_of_folders].filename
         if name_last_created_folder != "New folder" and name_last_created_folder != "Neuer Ordner" and name_last_created_folder != "untitled folder":
