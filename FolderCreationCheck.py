@@ -5,6 +5,7 @@ import random
 from smb.SMBConnection import SMBConnection
 import platform
 import subprocess
+import time
 
 getdate = datetime.datetime
 global folder_counter
@@ -99,18 +100,22 @@ def server_check():
     global server_ip
 
     server_ip = input("Please enter the Servers IP Address: ")
-
     while True:
-        command = ['ping', '-c', '1', server_ip]
-        try:
-            print("Pinging Server....")
-            if subprocess.call(command) == 0:
-                print("Server was reached and is online")
-                return
-        except IOError:
-            server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+        matched = re.match("192.168.[0-9][0-9][0-9].[0-9][0-9][0-9]", server_ip)
+        bool(matched)
+        if matched:
+            command = ['ping', '-c', '1', server_ip]
+            try:
+                print("Pinging Server....")
+                if subprocess.call(command) == 0:
+                    print("Server was reached and is online")
+                    return
+            except IOError:
+                server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+            else:
+                server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
         else:
-            server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+            server_ip = input("Please enter a IP Address the follows the pattern 192.168.000.000")
 
 
 server_check()
@@ -144,7 +149,7 @@ while True:
     if len(conn.listPath(share, "/")) > counted_folders:
         number_of_folders = len(conn.listPath(share, "/")) - 1
         name_last_created_folder = conn.listPath(share, "/")[number_of_folders].filename
-        if name_last_created_folder != "New folder" and name_last_created_folder != "Neuer Ordner":
+        if name_last_created_folder != "New folder" and name_last_created_folder != "Neuer Ordner" and name_last_created_folder != "untitled folder":
             print("Folder " + name_last_created_folder + " was created at " + getdate.now().strftime("%H:%M:%S"))
             folder_name = conn.listPath(share, "/")[number_of_folders].filename
             total_folder_counter()

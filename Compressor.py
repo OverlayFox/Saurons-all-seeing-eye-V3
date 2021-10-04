@@ -5,42 +5,81 @@ import datetime
 import shutil
 import time
 import re
+import subprocess
+from smb.SMBConnection import SMBConnection
 
-global main_path
-global archive_path
+userID = "the_black_gate"
+password = "SA_1600"
+client_machine_name = "OverlayFox"
+server_name = "mordor"
+domain_name = "mordor"
+conn = SMBConnection(userID, password, client_machine_name, server_name, domain=domain_name, use_ntlm_v2=True,
+                     is_direct_tcp=True)
 global path_test
 global compressor_time
 global compressor_date
 global user_compressor_date
+global main_share
+global archive_share
+global share_name_list
+global server_ip
 
 
 # get data from user
+def server_check():
+    global server_ip
+
+    server_ip = input("Please enter the Servers IP Address: ")
+    while True:
+        matched = re.match("192.168.[0-9][0-9].[0-9][0-9][0-9]", server_ip)
+        bool(matched)
+        if matched:
+            command = ['ping', '-c', '1', server_ip]
+            try:
+                print("Pinging Server....")
+                if subprocess.call(command) == 0:
+                    print("Server was reached and is online")
+                    return
+            except IOError:
+                server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+            else:
+                server_ip = input("Please ensure the Server is online and reenter the IP Address: ")
+        else:
+            server_ip = input("Please enter a IP Address the follows the pattern 192.168.000.000")
+
 
 def main_path_definer():
-    global main_path
+    global main_share
+    global share_name_list
 
-    main_path = input("Enter the uncompressed Archive Path here: ")
+    i = 0
+    share_name_list = []
+    while i < len(conn.listShares()):
+        share_name_list.append(conn.listShares()[i].name)
+        i = i + 1
+
+    main_share = input("Enter the name of the uncompressed Share here: ")
     while True:
-        if os.path.exists(main_path):
+        if main_share in share_name_list:
             return
         else:
-            main_path = input("Please use an existing Path for the uncompressed Archive Path here: ")
+            main_share = input("Share does not exist, please enter one that does exist: ")
 
 
 def archive_path_definer():
-    global archive_path
-    global main_path
+    global archive_share
+    global main_share
 
-    archive_path = input("Enter the compressed Archive Path here: ")
+    archive_share = input("Enter the compressed Share here: ")
     while True:
-        if os.path.exists(archive_path):
-            if main_path == archive_path:
-                print("Uncompressed Archive and compressed Archive cannot have the same destination")
-                archive_path = input("Please enter a new compressed Archive Path here: ")
+        if archive_share in share_name_list:
+            if archive_share == main_share:
+                print("Uncompressed Share and compressed Share cannot have the same destination")
+                archive_share = input("Please enter a new compressed Share here: ")
             else:
                 return
         else:
-            archive_path = input("Please use an existing Path for the compressed Archive Path here: ")
+            archive_share = input("Please use an existing Share for the compressed Archive here: ")
 
 
 def compressor_time_definer():
@@ -72,9 +111,12 @@ def compressor_date_definer():
 
 compressor_time_definer()
 compressor_date_definer()
+server_check()
+conn.connect(server_ip, 445)
 main_path_definer()
 archive_path_definer()
 print("Compressor will be executed on " + user_compressor_date + " at " + compressor_time)
+print("Files will be moved from " + main_share + " to " + archive_share)
 
 # ----------------------------------------------------------------------------------------------------
 # the actual compressor script
@@ -84,38 +126,32 @@ getdate = datetime.datetime
 weekday = getdate.today().weekday()
 date = getdate.now()
 date_converted = date.strftime("%H:%M:%S")
-zip_file_name = date.strftime("%Y_%m_%d - compressedArchive")
 
 
 def get_size():
     total_size = 0
-    for dirpath, dirnames, filenames in os.walk(main_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            if not os.path.islink(fp):
-                total_size += os.path.getsize(fp)
+    for filename in conn.listPath(main_share, "/"):
+        total_size = total_size + filename.filesize
 
     return total_size
 
 
 def compressor():
     global my_filter
+    global main_share
+    global archive_share
 
-    if not os.listdir(main_path):  # checks if the directory is empty or not
+    if not len(conn.listPath(main_share, "/")) <= 2:  # checks if the directory is empty or not
         print("Directory is empty")
     else:
-        if not get_size() >= shutil.disk_usage(archive_path)[2]:  # checks if there is enough space for the compression
-            with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:  # if the directory is not empty it compresses all files into a 7z archive
-                archive.writeall(main_path, 'archive')
-            shutil.move(zip_file_name, archive_path)  # moves the archive to the set destination
-            for files in os.listdir(main_path):
-                deletion_path = os.path.join(main_path, files)
-                try:
-                    shutil.rmtree(deletion_path)
-                except OSError:
-                    os.remove(deletion_path)
-        else:
-            print("Not enough space available to compress the archive.")
+        zip_file_name = date.strftime("%Y_%m_%d - compressedArchive")
+        with py7zr.SevenZipFile(zip_file_name, 'w', filters=my_filter) as archive:  # if the directory is not empty it compresses all files into a 7z archive
+            # archive.writeall(main_path, 'archive')
+            conn.storeFile(archive_share, "/", archive)  # moves the archive to the set destination
+        try:
+            conn.deleteFiles(main_share, "/", delete_matching_folders=True)  # tries to delete the old files in the original share
+        except OSError:
+            'Files could not be deleted'
 
 
 while True:
