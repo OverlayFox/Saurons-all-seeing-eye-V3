@@ -101,7 +101,7 @@ def server_check():
 
     server_ip = input("Please enter the Servers IP Address: ")
     while True:
-        matched = re.match("192.168.[0-9][0-9][0-9].[0-9][0-9][0-9]", server_ip)
+        matched = re.match("192.168.[0-9][0-9].[0-9][0-9][0-9]", server_ip)
         bool(matched)
         if matched:
             command = ['ping', '-c', '1', server_ip]
