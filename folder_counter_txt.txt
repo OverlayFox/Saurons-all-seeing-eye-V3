@@ -1,11 +1,11 @@
 Total Folders Created:
-0
+27
 
 Total Folders allowed:
-0
+5
 
 Total Folders Deleted:
-0
+9
 
 Special Folders created:
 0
