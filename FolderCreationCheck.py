@@ -136,8 +136,8 @@ def check():
             conn.createDirectory(share, name_last_created_folder + "/" + folders[folder_cycle])
             folder_cycle = folder_cycle + 1
         allowed_folder_counter()
-        if random.randint(0, 1000) < 1:
-            conn.createDirectory(share, name_last_created_folder + "/07 Furry Trash")
+        if random.randint(1, 1000) == 42:
+            conn.createDirectory(share, name_last_created_folder + "/07 Furry Yiff")
             special_folder_counter()
     else:
         conn.deleteDirectory(share, name_last_created_folder)
