@@ -148,7 +148,7 @@ counted_folders = len(conn.listPath(share, "/"))
 while True:
     if len(conn.listPath(share, "/")) > counted_folders:
         number_of_folders = len(conn.listPath(share, "/")) - 1
-        name_last_created_folder = conn.listPath(share, "/")[number_of_folders].filename
+        name_last_created_folder = conn.listPath(share, "/")[2].filename
         if name_last_created_folder != "New folder" and name_last_created_folder != "Neuer Ordner" and name_last_created_folder != "untitled folder":
             print("Folder " + name_last_created_folder + " was created at " + getdate.now().strftime("%H:%M:%S"))
             folder_name = conn.listPath(share, "/")[number_of_folders].filename
