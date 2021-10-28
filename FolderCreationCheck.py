@@ -145,9 +145,9 @@ def check():
 
 
 counted_folders = len(conn.listPath(share, "/"))
-while True:
-    command = ['ping', '-c', '1', server_ip]
-    if subprocess.call(command) == 0:
+server_crash_handler = 0
+while server_crash_handler == 0:
+    try:
         if len(conn.listPath(share, "/")) > counted_folders:
             number_of_folders = len(conn.listPath(share, "/")) - 1
             name_last_created_folder = conn.listPath(share, "/")[2].filename
@@ -160,5 +160,11 @@ while True:
 
         if len(conn.listPath(share, "/")) < counted_folders:
             counted_folders = len(conn.listPath(share, "/"))
-    else:
-        time.sleep(10)
+    except IOError:
+        server_crash_handler = 1
+        command = ['ping', '-c', '1', server_ip]
+        while True:
+            if subprocess.call(command) == 0:
+                server_crash_handler = 0
+            else:
+                time.sleep(10)
